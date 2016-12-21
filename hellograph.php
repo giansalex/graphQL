@@ -86,6 +86,7 @@ try {
                     'message' => ['type' => Type::string()],
                 ],
                 'resolve' => function ($root, $args) {
+                    if (!isset($args['message'])) return 'None';
                     return $root['prefix'].$args['message'];
                 }
             ],
@@ -95,6 +96,19 @@ try {
                     return 'v2.3';
                 }
             ],
+            'valores' => [
+                'type' => Type::listOf(Type::int()),
+                'args' => [
+                    'id' => ['type' => Type::int()]
+                ],
+                'resolve' => function($root, $args){
+                    $cant = array();
+                    if (isset($args['id']))
+                        for ($i=0;$i++<$args['id'];)
+                            $cant[] = $i;
+                    return $cant;
+                }
+            ]
         ],
     ]);
 

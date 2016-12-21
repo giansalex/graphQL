@@ -55,7 +55,7 @@
                 alert(msg.errors[0].message);
                 return;
             }
-            $( "#log").text( msg.data.echo);
+            $( "#log").text( JSON.stringify(msg.data));
         });
         return false;
     };
