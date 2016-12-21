@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test GraphQL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        #log {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>GraphQL</h1>
+    </header>
+    <div class="row">
+        <div class="col-md-6">
+            <form action="hellograph.php" method="post" id="frm">
+                <div class="form-group">
+                    <label for="q">Consulat: </label>
+                    <textarea class="form-control" rows="5" placeholder="Query" name="q" id="q"></textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit">Execute</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <textarea id="log" rows="10">
+            </textarea>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    var send = function () {
+        $frm = $(this);
+        $('#log').text("Ejecutando...");
+        $.ajax({
+            url : $frm.attr('action'),
+            method: $frm.attr('method'),
+            data: $frm.serialize(),
+            dataType : 'json',
+            error: function () {
+                alert("No work");
+            }
+        }).done(function( msg ) {
+            console.log(msg);
+            if(msg.errors) {
+                alert(msg.errors[0].message);
+                return;
+            }
+            $( "#log").text( msg.data.echo);
+        });
+        return false;
+    };
+    $('#frm').submit(send);
+</script>
+</body>
+</html>
