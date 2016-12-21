@@ -8,7 +8,14 @@
     <style>
         #log {
             width: 100%;
+            height: 25rem;
         }
+        pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+        .string { color: green; }
+        .number { color: darkorange; }
+        .boolean { color: blue; }
+        .null { color: magenta; }
+        .key { color: red; }
     </style>
 </head>
 <body>
@@ -20,7 +27,7 @@
         <div class="col-md-6">
             <form action="hellograph.php" method="post" id="frm">
                 <div class="form-group">
-                    <label for="q">Consulat: </label>
+                    <label for="q">Consulta: </label>
                     <textarea class="form-control" rows="5" placeholder="Query" name="q" id="q"></textarea>
                 </div>
                 <div class="form-group">
@@ -29,8 +36,9 @@
             </form>
         </div>
         <div class="col-md-6">
-            <textarea id="log" rows="10">
-            </textarea>
+            <!--<textarea id="log" rows="10">-->
+            <!--</textarea>-->
+            <pre id="log"></pre>
         </div>
     </div>
 </div>
@@ -38,6 +46,30 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
+    var setOut = function (jObject) {
+        $('#log').html(syntaxHighlight(JSON.stringify(jObject, undefined, 2)));
+    }
+    var syntaxHighlight = function (json) {
+        if (typeof json != 'string') {
+            json = JSON.stringify(json, undefined, 2);
+        }
+        json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'key';
+                } else {
+                    cls = 'string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'boolean';
+            } else if (/null/.test(match)) {
+                cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
     var send = function () {
         $frm = $(this);
         $('#log').text("Ejecutando...");
@@ -50,12 +82,11 @@
                 alert("No work");
             }
         }).done(function( msg ) {
-            console.log(msg);
             if(msg.errors) {
-                alert(msg.errors[0].message);
+                setOut(msg.errors);
                 return;
             }
-            $( "#log").text( JSON.stringify(msg.data));
+            setOut(msg.data);
         });
         return false;
     };
