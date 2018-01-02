@@ -10,6 +10,6 @@
     }
   ],
   "require": {
-    "webonyx/graphql-php": "v0.8.0"
+    "webonyx/graphql-php": "^0.11.5"
   }
 }
